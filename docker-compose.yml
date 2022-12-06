@@ -1,0 +1,151 @@
+version: "3.9"
+services:
+  ibis_test_base: &ibis_test_base
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - .:/host
+    working_dir: /host
+
+  shell:
+    <<: *ibis_test_base
+    command: /bin/bash
+    environment:
+      - PGHOST=db
+      - PGDATABASE=postgres
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+    links:
+      - db
+      
+  test:
+    <<: *ibis_test_base
+    command: /usr/local/bin/python ./doit.py
+    environment:
+      - PGHOST=db
+      - PGDATABASE=postgres
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+    links:
+      - db
+
+  db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: 'postgres'
+
+  # test_shell:
+  #   <<: *base_no_env
+  #   environment:
+  #   - PGHOST=db
+  #   - PGDATABASE=postgres
+  #   - PGUSER=postgres
+  #   - PGPASSWORD=postgres
+  #   - PGHOSTPRODUCTION=db
+  #   - PGDATABASEPRODUCTION=postgres
+  #   - PGUSERPRODUCTION=postgres
+  #   - PGPASSWORDPRODUCTION=postgres
+
+
+
+
+  # detect-hostile:
+  #   <<: *base
+  #   command: /usr/local/bin/bodhi.find_detections --ram-hostile --progress-bar
+
+  # detect-friendly:
+  #   <<: *base
+  #   command: /usr/local/bin/bodhi.find_detections --ram-friendly --progress-bar
+
+  # ibis:
+  #   <<: *base
+  #   entrypoint: /usr/local/bin/bodhi.ibis 
+
+  # notebook:
+  #   <<: *base
+  #   ports:
+  #       - "8888:8888"
+  #   working_dir: /notebooks
+  #   command: jupyter notebook --port=8888 --NotebookApp.iopub_data_rate_limit=10000000000 --allow-root --no-browser --ip=0.0.0.0
+
+  # streamlit:
+  #   <<: *base
+  #   ports:
+  #       - "8501:8501"
+  #   working_dir: /notebooks
+  #   command: /usr/local/bin/bodhi.streamlit
+
+  # db:
+  #   image: postgres:latest
+  #   restart: always
+  #   ports:
+  #     - 5432:5432
+  #   environment:
+  #     POSTGRES_PASSWORD: 'postgres'
+
+  # test_shell:
+  #   <<: *base_no_env
+  #   environment:
+  #   - PGHOST=db
+  #   - PGDATABASE=postgres
+  #   - PGUSER=postgres
+  #   - PGPASSWORD=postgres
+  #   - PGHOSTPRODUCTION=db
+  #   - PGDATABASEPRODUCTION=postgres
+  #   - PGUSERPRODUCTION=postgres
+  #   - PGPASSWORDPRODUCTION=postgres
+
+  #   links:
+  #     - db
+  #   command: /bin/bash
+
+
+
+      # bash 
+      # bash -c "source /run/secrets/app_secrets && bash"
+  #app:
+  #  <<: *base
+  #  ports:
+  #    - "8501:8501"
+  #  command: >
+  #    bash -c "source /run/secrets/app_secrets && streamlit run Summary.py"
+  #tasks:
+  #  <<: *base
+  #  volumes:
+  #    - ~/data:/root/data
+  #    - ./logs:/root/logs
+  #    - ./notebooks:/app/notebooks:delegated
+  #  command: >
+  #    bash -c "source /run/secrets/app_secrets && python task_runner.py > ~/logs/tasks.log 2>&1"
+  #tasks_daemon:
+  #  <<: *base
+  #  volumes:
+  #    - ~/data:/root/data
+  #    - ./logs:/root/logs
+  #    - ./notebooks:/app/notebooks:delegated
+  #  command: >
+  #    bash -c "source /run/secrets/app_secrets && python task_runner.py -d > ~/logs/tasks.log 2>&1"
+  #jupyter:
+  #  <<: *base
+  #  #container_name: jupyter
+  #  ports:
+  #    - "8888:8888"
+
+  #  volumes:
+  #    - ~/data:/root/data
+  #    - ./logs:/root/logs
+  #    - ./notebooks:/app/notebooks:delegated
+
+  #  command: >
+  #    bash -c "source /run/secrets/app_secrets && jupyter notebook --allow-root --port=8888 --no-browser --ip=0.0.0.0"
+#secrets:
+  #app_secrets:
+  #  file: ./secrets.sh
+
+
+## Run this to kill all build images
+## docker images | grep dashboard_ | awk '{print $3}' | xargs docker rmi

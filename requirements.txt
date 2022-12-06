@@ -1,0 +1,6 @@
+ibis-framework[postgres]
+ipython
+pandas
+pgcli
+pip
+psycopg2
