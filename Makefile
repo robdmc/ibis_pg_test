@@ -3,6 +3,7 @@
 
 .PHONY: help \
 shell \
+test \
 clean
 
 help:  ## Print the help documentation
