@@ -30,6 +30,10 @@ if try_uuid:
 else:
     conn.raw_sql("create table test (id integer, x float, PRIMARY KEY (id))")
 
-df = pd.DataFrame({'x': [1., 2., 3.]})
+# Works
+df = pd.DataFrame({'id': [1, 2, 3], 'x': [1., 2., 3.]})
+conn.insert('test', df)
 
+# Fails
+df = pd.DataFrame({'x': [1., 2., 3.]})
 conn.insert('test', df)
